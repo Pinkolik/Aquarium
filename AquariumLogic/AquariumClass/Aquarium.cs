@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AquariumLogic.FishClass;
 
 namespace AquariumLogic.AquariumClass
 {
-    public class Aquarium
+    public class Aquarium : IAquarium
     {
-        public List<object> Fishes { get; set; }
+        public IEnumerable<IFish> Fishes => fishes.AsReadOnly();
+        private readonly List<IFish> fishes;
 
         public Aquarium()
         {
-            Fishes = new List<object>();
+            fishes = new List<IFish>();
         }
 
-        public void AddFish()
+        public void AddFish(IFish fish)
         {
-            Fishes.Add(new object());
+            fishes.Add(fish);
         }
     }
 }
