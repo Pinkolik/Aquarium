@@ -8,5 +8,9 @@ namespace AquariumLogic.FishClass
 {
     public interface IFish
     {
+        double Health { get; }
+        double MaxHealth { get; }
+
+        void StartLiving();
     }
 }
