@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,15 @@ namespace AquariumLogic.FishClass
             var fish = new Fish(maxHealth, 100);
 
             Assert.AreEqual(maxHealth, fish.Health);
+        }
+
+        [Test]
+        public void FishHasZeroSpeed_BeforeStartsLiving()
+        {
+            var maxHealth = 100;
+            var fish = new Fish(maxHealth, 100);
+
+            Assert.AreEqual(new Vector2(0, 0), fish.Velocity);
         }
 
         [Test]

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
+using AquariumLogic.FoodClass;
 
 namespace AquariumLogic.FishClass
 {
@@ -11,6 +13,7 @@ namespace AquariumLogic.FishClass
     {
         public double Health { get; private set; }
         public double MaxHealth { get; }
+        public Vector2 Velocity { get; }
         private readonly int timeToLiveInSeconds;
         private readonly Timer healthTimer;
         private const int HealthTimerIntervalInMs = 100;
@@ -33,6 +36,11 @@ namespace AquariumLogic.FishClass
         {
             healthTimer.Start();
             ReduceHealth();
+        }
+
+        public void ConsumeFood(IFood food)
+        {
+            throw new NotImplementedException();
         }
     }
 }
