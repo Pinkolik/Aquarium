@@ -13,26 +13,35 @@ namespace AquariumLogic.AquariumClass
     public class Aquarium_Should
     {
         private Aquarium aquarium;
+        private Mock<IFish> mockFish;
 
         [SetUp]
         public void SetUp()
         {
             aquarium = new Aquarium();
+            mockFish = new Mock<IFish>();
         }
 
         [Test]
-        public void NewAquarium_ShouldBeEmpty()
+        public void AquariumIsEmpty_AfterCreation()
         {
             Assert.AreEqual(0, aquarium.Fishes.Count());
         }
 
         [Test]
-        public void Aquarium_AddFishWorks()
+        public void AquariumContainsFish_AfterAddingFish()
         {
-            var mockFish = new Mock<IFish>();
-            
             aquarium.AddFish(mockFish.Object);
             
+            Assert.AreEqual(1, aquarium.Fishes.Count());
+        }
+
+        [Test]
+        public void FishCountDoesNotChange_AfterAddingSameFish()
+        {
+            aquarium.AddFish(mockFish.Object);
+            aquarium.AddFish(mockFish.Object);
+
             Assert.AreEqual(1, aquarium.Fishes.Count());
         }
     }

@@ -9,12 +9,11 @@ namespace AquariumLogic.AquariumClass
 {
     public class Aquarium : IAquarium
     {
-        public IEnumerable<IFish> Fishes => fishes.AsReadOnly();
-        private readonly List<IFish> fishes;
+        public IEnumerable<IFish> Fishes => fishes.AsEnumerable();
+        private readonly HashSet<IFish> fishes = new HashSet<IFish>();
 
         public Aquarium()
         {
-            fishes = new List<IFish>();
         }
 
         public void AddFish(IFish fish)
