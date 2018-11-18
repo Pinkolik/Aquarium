@@ -21,11 +21,13 @@ namespace AquariumLogic.FishClass
         private readonly Timer healthTimer;
         private const int HealthTimerIntervalInMs = 100;
 
-        public Fish(double maxHealth, int timeToLiveInSeconds)
+        public Fish(double maxHealth, int timeToLiveInSeconds, Size size, Bitmap texture)
         {
             MaxHealth = maxHealth;
             Health = MaxHealth;
             this.timeToLiveInSeconds = timeToLiveInSeconds;
+            Size = size;
+            Texture = texture;
             healthTimer = new Timer(HealthTimerIntervalInMs);
             healthTimer.Elapsed += (sender, args) => ReduceHealth();
         }

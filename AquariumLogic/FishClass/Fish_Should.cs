@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -25,7 +26,7 @@ namespace AquariumLogic.FishClass
         {
             maxHealth = 100;
             timeToLiveInSeconds = 1;
-            fish = new Fish(maxHealth, timeToLiveInSeconds);
+            fish = new Fish(maxHealth, timeToLiveInSeconds, new Size(100, 100), null);
 
             food = new Mock<IFood>();
             healthValue = 10;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +15,13 @@ namespace AquariumLogic.AquariumClass
     {
         private Aquarium aquarium;
         private Mock<IFish> mockFish;
+        private Size size;
 
         [SetUp]
         public void SetUp()
         {
-            aquarium = new Aquarium();
+            size = new Size(100, 100);
+            aquarium = new Aquarium(size);
             mockFish = new Mock<IFish>();
         }
 
@@ -31,18 +34,26 @@ namespace AquariumLogic.AquariumClass
         [Test]
         public void AquariumContainsFish_AfterAddingFish()
         {
-            aquarium.AddFish(mockFish.Object);
-            
+            aquarium.AddFish(mockFish.Object, new Point(0, 0));
+
             Assert.AreEqual(1, aquarium.Fishes.Count());
         }
 
         [Test]
         public void FishCountDoesNotChange_AfterAddingSameFish()
         {
-            aquarium.AddFish(mockFish.Object);
-            aquarium.AddFish(mockFish.Object);
+            aquarium.AddFish(mockFish.Object, new Point(0, 0));
+            aquarium.AddFish(mockFish.Object, new Point(0, 0));
 
             Assert.AreEqual(1, aquarium.Fishes.Count());
+        }
+
+        [Test]
+        public void ThrowsException_WhenAddingFishOutOfBounds()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFish(mockFish.Object, new Point(-1, -1)));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                aquarium.AddFish(mockFish.Object, new Point(size.Width, size.Height)));
         }
     }
 }
