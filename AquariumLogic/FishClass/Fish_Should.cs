@@ -5,6 +5,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using AquariumLogic.FoodClass;
+using Moq;
 using NUnit.Framework;
 
 namespace AquariumLogic.FishClass
@@ -15,6 +17,8 @@ namespace AquariumLogic.FishClass
         private int maxHealth;
         private int timeToLiveInSeconds;
         private Fish fish;
+        private Mock<IFood> food;
+        private int healthValue;
 
         [SetUp]
         public void SetUp()
@@ -22,6 +26,10 @@ namespace AquariumLogic.FishClass
             maxHealth = 100;
             timeToLiveInSeconds = 1;
             fish = new Fish(maxHealth, timeToLiveInSeconds);
+
+            food = new Mock<IFood>();
+            healthValue = 10;
+            food.Setup(f => f.HealthValue).Returns(healthValue);
         }
 
 
@@ -29,6 +37,21 @@ namespace AquariumLogic.FishClass
         public void FishHasMaxHealth_AfterCreation()
         {
             Assert.AreEqual(maxHealth, fish.Health);
+        }
+        
+        [Test]
+        public void FishDies_AfterTimeToLivePasses()
+        {
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds * 1000);
+
+            Assert.False(fish.IsAlive);
+        }
+
+        [Test]
+        public void FishIsAlive_AfterCreation()
+        {
+            Assert.True(fish.IsAlive);
         }
 
         [Test]
@@ -38,10 +61,49 @@ namespace AquariumLogic.FishClass
         }
 
         [Test]
-        public void FishDies_AfterTimeToLivePasses()
+        public void FishHealthIsLowerThanMaxHealth_AfterConsumingFood()
+        {
+            fish.ConsumeFood(food.Object);
+
+            Assert.LessOrEqual(fish.Health, fish.MaxHealth);
+        }
+
+        [Test]
+        public void FishHealthIncreasesCorrectly_AfterConsumingFood()
         {
             fish.StartLiving();
-            Thread.Sleep(timeToLiveInSeconds*1000);
+            var healthBefore = fish.Health;
+            fish.ConsumeFood(food.Object);
+            var healthAfter = fish.Health;
+
+            Assert.AreEqual(healthBefore + healthValue, healthAfter);
+        }
+
+        [Test]
+        public void FishHealthDoesNotChangeAfterDeath_WhenConsumingFood()
+        {
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds * 1000);
+            fish.ConsumeFood(food.Object);
+
+            Assert.AreEqual(0, fish.Health);
+        }
+
+        [Test]
+        public void FishIsDeadAfterDeath_WhenConsumingFood()
+        {
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds * 1000);
+            fish.ConsumeFood(food.Object);
+
+            Assert.IsFalse(fish.IsAlive);
+        }
+
+        [Test]
+        public void FishHasZeroHealth_WhenDead()
+        {
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds * 1000);
 
             Assert.AreEqual(0, fish.Health);
         }

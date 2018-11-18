@@ -13,6 +13,7 @@ namespace AquariumLogic.FishClass
         double Health { get; }
         double MaxHealth { get; }
         Vector2 Velocity { get;  }
+        bool IsAlive { get; }
 
         void StartLiving();
         void ConsumeFood(IFood food);
