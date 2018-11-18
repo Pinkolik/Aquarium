@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AquariumLogic.IDrawable
+namespace AquariumLogic.IDrawableInterface
 {
     public interface IDrawable
     {

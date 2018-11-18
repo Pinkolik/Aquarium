@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
 using AquariumLogic.FoodClass;
+using AquariumLogic.IDrawableInterface;
 
 namespace AquariumLogic.FishClass
 {
-    public class Fish : IFish
+    public class Fish : IFish, IDrawable
     {
         public double Health { get; private set; }
         public double MaxHealth { get; }
@@ -47,5 +49,8 @@ namespace AquariumLogic.FishClass
             if (!IsAlive) return;
             Health = Math.Min(MaxHealth, Health + food.HealthValue);
         }
+
+        public Size Size { get; }
+        public Bitmap Texture { get; }
     }
 }

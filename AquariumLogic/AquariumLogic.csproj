@@ -69,7 +69,7 @@
     <Compile Include="FishClass\Fish_Should.cs" />
     <Compile Include="FishClass\IFish.cs" />
     <Compile Include="FoodClass\IFood.cs" />
-    <Compile Include="IDrawable\IDrawable.cs" />
+    <Compile Include="IDrawableInterface\IDrawable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
