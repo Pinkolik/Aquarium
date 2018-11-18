@@ -12,30 +12,34 @@ namespace AquariumLogic.FishClass
     [TestFixture]
     public class Fish_Should
     {
+        private int maxHealth;
+        private int timeToLiveInSeconds;
+        private Fish fish;
+
+        [SetUp]
+        public void SetUp()
+        {
+            maxHealth = 100;
+            timeToLiveInSeconds = 1;
+            fish = new Fish(maxHealth, timeToLiveInSeconds);
+        }
+
+
         [Test]
         public void FishHasMaxHealth_AfterCreation()
         {
-            var maxHealth = 100;
-            var fish = new Fish(maxHealth, 100);
-
             Assert.AreEqual(maxHealth, fish.Health);
         }
 
         [Test]
         public void FishHasZeroSpeed_BeforeStartsLiving()
         {
-            var maxHealth = 100;
-            var fish = new Fish(maxHealth, 100);
-
             Assert.AreEqual(new Vector2(0, 0), fish.Velocity);
         }
 
         [Test]
         public void FishDies_AfterTimeToLivePasses()
         {
-            var maxHealth = 100;
-            var timeToLiveInSeconds = 1;
-            var fish = new Fish(maxHealth, timeToLiveInSeconds);
             fish.StartLiving();
             Thread.Sleep(timeToLiveInSeconds*1000);
 
