@@ -16,6 +16,7 @@ namespace AquariumLogic.FishClass
         bool IsAlive { get; }
 
         void StartLiving();
+        void ChangeVelocity();
         void ConsumeFood(IFood food);
     }
 }

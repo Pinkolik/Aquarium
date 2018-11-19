@@ -40,10 +40,19 @@ namespace AquariumLogic.AquariumClass
         }
 
         [Test]
+        public void FishHasCorrectPos_AfterAddingFish()
+        {
+            var position = new Point(1, 2);
+            aquarium.AddFish(mockFish.Object, position);
+
+            Assert.AreEqual(aquarium.Fishes.First(pair => pair.Key == mockFish.Object).Value, position);
+        }
+
+        [Test]
         public void FishCountDoesNotChange_AfterAddingSameFish()
         {
             aquarium.AddFish(mockFish.Object, new Point(0, 0));
-            aquarium.AddFish(mockFish.Object, new Point(0, 0));
+            aquarium.AddFish(mockFish.Object, new Point(0, 1));
 
             Assert.AreEqual(1, aquarium.Fishes.Count());
         }

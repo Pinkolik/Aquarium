@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AquariumLogic.FoodClass;
+using AquariumLogic.IDrawableInterface;
 using Moq;
 using NUnit.Framework;
 
@@ -20,19 +21,48 @@ namespace AquariumLogic.FishClass
         private Fish fish;
         private Mock<IFood> food;
         private int healthValue;
+        private int maxVelocity;
+        private int minVelocity;
 
         [SetUp]
         public void SetUp()
         {
             maxHealth = 100;
             timeToLiveInSeconds = 1;
-            fish = new Fish(maxHealth, timeToLiveInSeconds, new Size(100, 100), null);
+            minVelocity = 10;
+            maxVelocity = 100;
+            fish = new Fish(maxHealth,
+                timeToLiveInSeconds,
+                minVelocity,
+                maxVelocity,
+                new Size(100, 100),
+                null);
 
             food = new Mock<IFood>();
             healthValue = 10;
             food.Setup(f => f.HealthValue).Returns(healthValue);
         }
 
+        [Test]
+        public void FishVelocityIsInRange_AfterStartLiving()
+        {
+            fish.StartLiving();
+
+            Assert.GreaterOrEqual(fish.Velocity.Length(), minVelocity);
+            Assert.LessOrEqual(fish.Velocity.Length(), maxVelocity);
+        }
+
+        [Test]
+        [Repeat(20)]
+        public void FishVelocityIsInRange_AfterChangeVelocity()
+        {
+            fish.StartLiving();
+            fish.ChangeVelocity();
+
+            Assert.GreaterOrEqual(fish.Velocity.Length(), minVelocity);
+            Assert.LessOrEqual(fish.Velocity.Length(), maxVelocity);
+        }
+        
 
         [Test]
         public void FishHasMaxHealth_AfterCreation()
