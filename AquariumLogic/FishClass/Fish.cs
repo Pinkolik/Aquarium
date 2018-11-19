@@ -17,6 +17,7 @@ namespace AquariumLogic.FishClass
         public double MaxHealth { get; }
         public Vector2 Velocity { get; private set; }
         public bool IsAlive { get; private set; } = true;
+        public event EventHandler OnHungry;
         private double directionAngle = 0;
         private readonly int timeToLiveInSeconds;
         private readonly Timer healthTimer;
@@ -43,6 +44,8 @@ namespace AquariumLogic.FishClass
         private void ReduceHealth()
         {
             Health = Math.Max(Health - MaxHealth / (timeToLiveInSeconds * 1000.0 / HealthTimerIntervalInMs), 0);
+            if (Health <= MaxHealth/2)
+                OnHungry?.Invoke(this, EventArgs.Empty);
             if (Health != 0) return;
             IsAlive = false;
             healthTimer.Stop();
@@ -69,6 +72,7 @@ namespace AquariumLogic.FishClass
         {
             if (!IsAlive) return;
             Health = Math.Min(MaxHealth, Health + food.HealthValue);
+            food.Consume();
         }
 
         public Size Size { get; }

@@ -68,6 +68,8 @@
     <Compile Include="FishClass\Fish.cs" />
     <Compile Include="FishClass\Fish_Should.cs" />
     <Compile Include="FishClass\IFish.cs" />
+    <Compile Include="FoodClass\Food.cs" />
+    <Compile Include="FoodClass\Food_Should.cs" />
     <Compile Include="FoodClass\IFood.cs" />
     <Compile Include="IDrawableInterface\IDrawable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

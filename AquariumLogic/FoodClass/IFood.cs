@@ -10,5 +10,8 @@ namespace AquariumLogic.FoodClass
     {
         double HealthValue { get; }
         double Weight { get;  }
+        event EventHandler OnConsumed;
+
+        void Consume();
     }
 }

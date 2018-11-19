@@ -138,5 +138,25 @@ namespace AquariumLogic.FishClass
 
             Assert.AreEqual(0, fish.Health);
         }
+        
+        [Test]
+        public void FoodConsumeInvoked_WhenFishConsumesFood()
+        {
+            fish.ConsumeFood(food.Object);
+            
+            food.Verify(f => f.Consume(), Times.Once);
+        }
+
+        [Test]
+        public void OnHungryInvoked_WhenHealthLessThanHalf()
+        {
+            var wasInvoked = false;
+            fish.OnHungry += (sender, args) => wasInvoked = true;
+
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds*1000/2);
+
+            Assert.True(wasInvoked);
+        }
     }
 }

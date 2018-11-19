@@ -14,6 +14,7 @@ namespace AquariumLogic.FishClass
         double MaxHealth { get; }
         Vector2 Velocity { get;  }
         bool IsAlive { get; }
+        event EventHandler OnHungry;
 
         void StartLiving();
         void ChangeVelocity();
