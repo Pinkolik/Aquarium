@@ -39,30 +39,51 @@ namespace AquariumLogic.FishClass
                 null);
 
             food = new Mock<IFood>();
-            healthValue = 10;
+            healthValue = 50;
             food.Setup(f => f.HealthValue).Returns(healthValue);
         }
 
         [Test]
-        public void FishVelocityIsInRange_AfterStartLiving()
+        public void FishVelocityIsZero_BeforeChangeVelocity()
         {
-            fish.StartLiving();
-
-            Assert.GreaterOrEqual(fish.Velocity.Length(), minVelocity);
-            Assert.LessOrEqual(fish.Velocity.Length(), maxVelocity);
+            Assert.AreEqual(new Vector2(0,0), fish.Velocity);
         }
 
         [Test]
         [Repeat(20)]
         public void FishVelocityIsInRange_AfterChangeVelocity()
         {
-            fish.StartLiving();
             fish.ChangeVelocity();
 
             Assert.GreaterOrEqual(fish.Velocity.Length(), minVelocity);
             Assert.LessOrEqual(fish.Velocity.Length(), maxVelocity);
         }
+
+        [Test]
+        public void FishVelocityDirectionIsCorrect_WhenSetTargetVector()
+        {
+            float targetX = 100;
+            float targetY = 200;
+            var targetVector = new Vector2(targetX, targetY);
+
+            fish.SetTargetVector(targetVector);
+
+            var expected = targetX / targetY;
+            var actual = fish.Velocity.X / fish.Velocity.Y;
+            Assert.AreEqual(expected, actual);
+        }
         
+        [Test]
+        public void FishVelocityLengthIsMax_WhenSetTargetVector()
+        {
+            float targetX = 100;
+            float targetY = 200;
+            var targetVector = new Vector2(targetX, targetY);
+
+            fish.SetTargetVector(targetVector);
+
+            Assert.AreEqual(maxVelocity, fish.Velocity.Length());
+        }
 
         [Test]
         public void FishHasMaxHealth_AfterCreation()
@@ -102,12 +123,14 @@ namespace AquariumLogic.FishClass
         [Test]
         public void FishHealthIncreasesCorrectly_AfterConsumingFood()
         {
+            healthValue = 10;
+
             fish.StartLiving();
             var healthBefore = fish.Health;
             fish.ConsumeFood(food.Object);
             var healthAfter = fish.Health;
 
-            Assert.AreEqual(healthBefore + healthValue, healthAfter);
+            Assert.AreEqual(Math.Min(healthBefore + healthValue, maxHealth), healthAfter);
         }
 
         [Test]
@@ -157,6 +180,31 @@ namespace AquariumLogic.FishClass
             Thread.Sleep(timeToLiveInSeconds*1000/2);
 
             Assert.True(wasInvoked);
+        }
+
+        [Test]
+        public void FishIsHungry_WhenHealthLessThanHalf()
+        {
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds*1000/2);
+
+            Assert.True(fish.IsHungry);
+        }
+
+        [Test]
+        public void FishIsNotHungry_AfterCreation()
+        {
+            Assert.False(fish.IsHungry);
+        }
+
+        [Test]
+        public void FishIsNotHungry_AfterConsumingFood()
+        {
+            fish.StartLiving();
+            Thread.Sleep(timeToLiveInSeconds * 1000 / 2);
+            fish.ConsumeFood(food.Object);
+
+            Assert.False(fish.IsHungry);
         }
     }
 }

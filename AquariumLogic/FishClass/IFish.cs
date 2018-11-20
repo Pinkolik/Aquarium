@@ -14,10 +14,12 @@ namespace AquariumLogic.FishClass
         double MaxHealth { get; }
         Vector2 Velocity { get;  }
         bool IsAlive { get; }
+        bool IsHungry { get; }
         event EventHandler OnHungry;
 
         void StartLiving();
         void ChangeVelocity();
         void ConsumeFood(IFood food);
+        void SetTargetVector(Vector2 targetVector);
     }
 }
