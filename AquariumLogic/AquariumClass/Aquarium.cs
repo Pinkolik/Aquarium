@@ -5,9 +5,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
 using AquariumLogic.IDrawableInterface;
+using AquariumLogic.PointExtensionClass;
 
 namespace AquariumLogic.AquariumClass
 {
@@ -15,12 +17,27 @@ namespace AquariumLogic.AquariumClass
     {
         public IEnumerable<KeyValuePair<IFish, Point>> Fishes => fishesDictionary.AsEnumerable();
         public IEnumerable<KeyValuePair<IFood, Point>> Food => foodDictionary.AsEnumerable();
+        public long IterationCount { get; private set; }
+        public int IterateIntervalInMs { get; }
         private readonly Dictionary<IFish, Point> fishesDictionary = new Dictionary<IFish, Point>();
         private readonly Dictionary<IFood, Point> foodDictionary = new Dictionary<IFood, Point>();
+        private readonly Timer autoIterateTimer = new Timer();
 
-        public Aquarium(Size size)
+
+        public Aquarium(Size size, bool autoIterate = false, int iterateIntervalInMs = 100)
         {
             Size = size;
+            IterateIntervalInMs = iterateIntervalInMs;
+            if (autoIterate)
+                InitializeAutoIterateTimer(iterateIntervalInMs);
+        }
+
+        private void InitializeAutoIterateTimer(int iterateIntervalInMs)
+        {
+            autoIterateTimer.Interval = iterateIntervalInMs;
+            autoIterateTimer.Elapsed += (sender, args) => Iterate();
+            autoIterateTimer.Enabled = true;
+            Iterate();
         }
 
         public void AddFish(IFish fish, Point position)
@@ -44,14 +61,27 @@ namespace AquariumLogic.AquariumClass
 
         public void Iterate()
         {
-            foreach (var pair in fishesDictionary)
+            foreach (var fish in fishesDictionary.Keys.ToList())
             {
-                var fish = pair.Key;
-                var fishPosition = pair.Value;
-                if (!fish.IsHungry) continue;
-                var foodPosition = FindClosestFood(pair.Value);
-                fish.SetTargetVector(GetPointToPointVector(pair.Value, foodPosition));
+                var fishPosition = fishesDictionary[fish];
+                if (fish.IsHungry)
+                {
+                    var foodPosition = FindClosestFood(fishPosition);
+                    fish.SetTargetVector(GetPointToPointVector(fishPosition, foodPosition));
+                }
+                else
+                {
+                    fishesDictionary[fish] = fishPosition.AddVector(fish.Velocity);
+                }
             }
+
+            foreach (var food in foodDictionary.Keys.ToList())
+            {
+                var foodPosition = foodDictionary[food];
+                foodDictionary[food] = foodPosition.AddVector(new Vector2(0, (float)food.Weight));
+            }
+
+            IterationCount++;
         }
 
         private Point FindClosestFood(Point fishPosition)

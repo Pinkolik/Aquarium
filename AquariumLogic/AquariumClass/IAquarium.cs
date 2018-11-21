@@ -13,6 +13,8 @@ namespace AquariumLogic.AquariumClass
     {
         IEnumerable<KeyValuePair<IFish, Point>> Fishes { get; }
         IEnumerable<KeyValuePair<IFood, Point>> Food { get; }
+        long IterationCount { get; }
+        int IterateIntervalInMs { get; }
 
         void AddFish(IFish fish, Point position);
         void AddFood(IFood food, Point position);

@@ -4,9 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
+using AquariumLogic.PointExtensionClass;
 using Moq;
 using NUnit.Framework;
 
@@ -42,6 +44,18 @@ namespace AquariumLogic.AquariumClass
             aquarium.AddFish(mockFish.Object, new Point(0, 0));
 
             Assert.AreEqual(1, aquarium.Fishes.Count());
+        }
+
+        [Test]
+        public void AquariumIterateCalled_WhenAutoIterateIsTrue()
+        {
+            var autoIterate = true;
+            var iterateIntervalInMs = 100;
+            var iterationCount = 5;
+            var autoAquarium = new Aquarium(size, autoIterate, iterateIntervalInMs);
+            Thread.Sleep(iterateIntervalInMs*iterationCount);
+
+            Assert.AreEqual(iterationCount, autoAquarium.IterationCount);
         }
 
         [Test]
@@ -125,6 +139,52 @@ namespace AquariumLogic.AquariumClass
 
             var expected = new Vector2(foodPos.X, foodPos.Y) - new Vector2(fishPos.X, fishPos.Y);
             mockFish.Verify(f => f.SetTargetVector(expected), Times.Once);
+        }
+
+        [Test]
+        public void FishSetTargetVectorToClosestFoodInvoked_WhenFishIsHungry()
+        {
+            var farFood = new Mock<IFood>();
+            var fishPos = new Point(1, 1);
+            var closeFoodPos = new Point(40, 40);
+            var farFoodPos = new Point(50, 50);
+            mockFish.Setup(f => f.IsHungry).Returns(true);
+            aquarium.AddFish(mockFish.Object, fishPos);
+            aquarium.AddFood(mockFood.Object, closeFoodPos);
+            aquarium.AddFood(farFood.Object, farFoodPos);
+
+            aquarium.Iterate();
+
+            var expected = new Vector2(closeFoodPos.X, closeFoodPos.Y) - new Vector2(fishPos.X, fishPos.Y);
+            mockFish.Verify(f => f.SetTargetVector(expected), Times.Once);
+        }
+
+        [Test]
+        public void FishPositionChangesCorrectly_WhenIterate()
+        {
+            var fishVector = new Vector2(2,3);
+            var startPos = new Point(0,0);
+            mockFish.Setup(f => f.Velocity).Returns(fishVector);
+            aquarium.AddFish(mockFish.Object, startPos);
+
+            aquarium.Iterate();
+
+            var expected = startPos.AddVector(fishVector);
+            Assert.AreEqual(expected, aquarium.Fishes.First(p => p.Key == mockFish.Object).Value);
+        }
+
+        [Test]
+        public void FoodPositionChangesCorrectly_WhenIterate()
+        {
+            var foodWeight = 2;
+            var startPos = new Point(0,0);
+            mockFood.Setup(f => f.Weight).Returns(foodWeight);
+            aquarium.AddFood(mockFood.Object, startPos);
+
+            aquarium.Iterate();
+
+            var expected = startPos.AddVector(new Vector2(0, foodWeight));
+            Assert.AreEqual(expected, aquarium.Food.First(p => p.Key == mockFood.Object).Value);
         }
     }
 }
