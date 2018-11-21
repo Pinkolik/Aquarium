@@ -14,5 +14,10 @@ namespace AquariumLogic.PointExtensionClass
         {
             return new Point((int)(point.X + vector.X), (int)(point.Y + vector.Y));
         }
+
+        public static Vector2 GetVectorToPoint(this Point from, Point to)
+        {
+            return new Vector2(to.X, to.Y) - new Vector2(from.X, from.Y);
+        }
     }
 }

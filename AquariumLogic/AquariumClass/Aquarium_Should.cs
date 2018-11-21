@@ -137,7 +137,7 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            var expected = new Vector2(foodPos.X, foodPos.Y) - new Vector2(fishPos.X, fishPos.Y);
+            var expected = fishPos.GetVectorToPoint(foodPos);
             mockFish.Verify(f => f.SetTargetVector(expected), Times.Once);
         }
 
@@ -155,7 +155,7 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            var expected = new Vector2(closeFoodPos.X, closeFoodPos.Y) - new Vector2(fishPos.X, fishPos.Y);
+            var expected = fishPos.GetVectorToPoint(closeFoodPos);
             mockFish.Verify(f => f.SetTargetVector(expected), Times.Once);
         }
 

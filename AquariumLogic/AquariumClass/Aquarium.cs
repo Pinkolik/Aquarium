@@ -44,11 +44,9 @@ namespace AquariumLogic.AquariumClass
         {
             if (IsOutOfBounds(position))
                 throw new ArgumentOutOfRangeException();
-            if (!fishesDictionary.ContainsKey(fish))
-            {
-                fishesDictionary.Add(fish, position);
-                fish.StartLiving();
-            }
+            if (fishesDictionary.ContainsKey(fish)) return;
+            fishesDictionary.Add(fish, position);
+            fish.StartLiving();
         }
 
         public void AddFood(IFood food, Point position)
@@ -61,47 +59,49 @@ namespace AquariumLogic.AquariumClass
 
         public void Iterate()
         {
+            UpdateFishesPosition();
+
+            UpdateFoodPosition();
+
+            IterationCount++;
+        }
+
+        private void UpdateFoodPosition()
+        {
+            foreach (var food in foodDictionary.Keys.ToList())
+            {
+                var foodPosition = foodDictionary[food];
+                foodDictionary[food] = foodPosition.AddVector(new Vector2(0, (float) food.Weight));
+            }
+        }
+
+        private void UpdateFishesPosition()
+        {
             foreach (var fish in fishesDictionary.Keys.ToList())
             {
                 var fishPosition = fishesDictionary[fish];
                 if (fish.IsHungry)
                 {
                     var foodPosition = FindClosestFood(fishPosition);
-                    fish.SetTargetVector(GetPointToPointVector(fishPosition, foodPosition));
+                    fish.SetTargetVector(fishPosition.GetVectorToPoint(foodPosition));
                 }
-                else
-                {
-                    fishesDictionary[fish] = fishPosition.AddVector(fish.Velocity);
-                }
+                fishesDictionary[fish] = fishPosition.AddVector(fish.Velocity);
             }
-
-            foreach (var food in foodDictionary.Keys.ToList())
-            {
-                var foodPosition = foodDictionary[food];
-                foodDictionary[food] = foodPosition.AddVector(new Vector2(0, (float)food.Weight));
-            }
-
-            IterationCount++;
         }
 
         private Point FindClosestFood(Point fishPosition)
         {
             var minDistance = float.MaxValue;
             var result = new Point(0,0);
-            foreach (var pair in foodDictionary)
+            foreach (var foodPosition in foodDictionary.Values)
             {
-                var distance = GetPointToPointVector(fishPosition, pair.Value).Length();
+                var distance = fishPosition.GetVectorToPoint(foodPosition).Length();
                 if (!(distance < minDistance)) continue;
                 minDistance = distance;
-                result = pair.Value;
+                result = foodPosition;
             }
 
             return result;
-        }
-
-        private Vector2 GetPointToPointVector(Point from, Point to)
-        {
-            return new Vector2(to.X, to.Y) - new Vector2(from.X, from.Y);
         }
 
         private bool IsOutOfBounds(Point position)
