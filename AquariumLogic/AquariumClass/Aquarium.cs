@@ -90,7 +90,7 @@ namespace AquariumLogic.AquariumClass
                 {
                     //if (IsInside())
                     var foodDrawable = FindClosestFood(fishDrawable);
-                    fish.SetTargetVector(fishDrawable.Position.GetVectorToPoint(foodDrawable.Position));
+                    fish.SetTargetVector(fishDrawable.GetCenterPoint().GetVectorToPoint(foodDrawable.GetCenterPoint()));
                 }
 
                 fishesDictionary[fish] =
@@ -101,12 +101,12 @@ namespace AquariumLogic.AquariumClass
         private IDrawable FindClosestFood(IDrawable fishDrawable)
         {
             var minDistance = float.MaxValue;
-            var fishCenterPoint = new Point(fishDrawable.Size.Width + fishDrawable.Position.Y,
-                fishDrawable.Size.Height + fishDrawable.Position.Y);
+            var fishCenterPoint = fishDrawable.GetCenterPoint();
             IDrawable result = null;
             foreach (var foodDrawable in foodDictionary.Values)
             {
-                var distance = fishDrawable.Position.GetVectorToPoint(foodDrawable.Position).Length();
+                var foodCenterPoint = foodDrawable.GetCenterPoint();
+                var distance = fishCenterPoint.GetVectorToPoint(foodCenterPoint).Length();
                 if (!(distance < minDistance)) continue;
                 minDistance = distance;
                 result = foodDrawable;
@@ -114,11 +114,7 @@ namespace AquariumLogic.AquariumClass
 
             return result;
         }
-
-        private bool IsOutOfBounds(Point position)
-        {
-            return position.X < 0 || position.Y < 0 || position.X >= Size.Width || position.Y >= Size.Height;
-        }
+        
         public Size Size { get; }
     }
 }

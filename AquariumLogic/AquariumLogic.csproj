@@ -73,6 +73,7 @@
     <Compile Include="FoodClass\Food_Should.cs" />
     <Compile Include="FoodClass\IFood.cs" />
     <Compile Include="IDrawableInterface\IDrawable.cs" />
+    <Compile Include="IDrawableInterface\IDrawableExtension.cs" />
     <Compile Include="PointExtensionClass\PointExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SizeExtensionClass\SizeExtension.cs" />

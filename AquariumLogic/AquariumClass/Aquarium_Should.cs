@@ -25,17 +25,20 @@ namespace AquariumLogic.AquariumClass
         private Size aquariumSize;
         private Size fishSize;
         private Mock<IDrawable> mockFoodDrawable;
+        private Size foodSize;
 
         [SetUp]
         public void SetUp()
         {
             aquariumSize = new Size(800, 600);
             fishSize = new Size(60, 20);
+            foodSize = new Size(5, 5);
             aquarium = new Aquarium(aquariumSize);
             mockFish = new Mock<IFish>();
             mockFishDrawable = new Mock<IDrawable>();
             mockFishDrawable.Setup(f => f.Size).Returns(fishSize);
             mockFoodDrawable = new Mock<IDrawable>();
+            mockFoodDrawable.Setup(f => f.Size).Returns(foodSize);
             mockFish.Setup(f => f.IsAlive).Returns(true);
             mockFood = new Mock<IFood>();
         }
@@ -156,7 +159,8 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            var expected = fishPos.GetVectorToPoint(foodPos);
+            var expected = mockFishDrawable.Object.GetCenterPoint()
+                .GetVectorToPoint(mockFoodDrawable.Object.GetCenterPoint());
             mockFish.Verify(f => f.SetTargetVector(expected), Times.Once);
         }
 
@@ -172,6 +176,7 @@ namespace AquariumLogic.AquariumClass
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(closeFoodPos);
             mockFarFoodDrawable.Setup(f => f.Position).Returns(farFoodPos);
+            mockFarFoodDrawable.Setup(f => f.Size).Returns(foodSize);
 
             aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
             aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
@@ -179,7 +184,8 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            var expected = fishPos.GetVectorToPoint(closeFoodPos);
+            var expected = mockFishDrawable.Object.GetCenterPoint()
+                .GetVectorToPoint(mockFoodDrawable.Object.GetCenterPoint());
             mockFish.Verify(f => f.SetTargetVector(expected), Times.Once);
         }
 
