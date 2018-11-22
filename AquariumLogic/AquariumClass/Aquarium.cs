@@ -75,8 +75,10 @@ namespace AquariumLogic.AquariumClass
             foreach (var food in foodDictionary.Keys.ToList())
             {
                 var foodDrawable = foodDictionary[food];
-                foodDictionary[food] = foodDictionary[food]
-                    .UpdatePosition(foodDrawable.Position.AddVector(new Vector2(0, (float) food.Weight)));
+                var newPos = foodDrawable.Position.AddVector(new Vector2(0, (float) food.Weight));
+                var newFoodDrawable = foodDictionary[food].UpdatePosition(newPos);
+                if (!Size.IsOutOfBounds(newFoodDrawable))
+                    foodDictionary[food] = newFoodDrawable;
             }
         }
 
@@ -92,7 +94,10 @@ namespace AquariumLogic.AquariumClass
                     var foodPair = FindClosestFood(fishDrawable);
                     var foodDrawable = foodPair.Value;
                     if (fishDrawable.HasCollisionWith(foodDrawable))
+                    {
                         fish.ConsumeFood(foodPair.Key);
+                        foodDictionary.Remove(foodPair.Key);
+                    }
                     else
                         fish.SetTargetVector(fishDrawable.GetCenterPoint()
                             .GetVectorToPoint(foodDrawable.GetCenterPoint()));
@@ -120,7 +125,7 @@ namespace AquariumLogic.AquariumClass
 
             return result;
         }
-        
+
         public Size Size { get; }
     }
 }

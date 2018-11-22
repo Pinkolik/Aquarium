@@ -150,7 +150,7 @@ namespace AquariumLogic.AquariumClass
         public void FishSetTargetVectorToFoodInvoked_WhenFishIsHungry()
         {
             var fishPos = new Point(1, 1);
-            var foodPos = new Point(4, 4);
+            var foodPos = new Point(50, 50);
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
             mockFish.Setup(f => f.IsHungry).Returns(true);
@@ -252,11 +252,11 @@ namespace AquariumLogic.AquariumClass
         }
 
         [Test]
-        [Ignore("Not implemented")]
         public void FoodDeleted_AfterFishEatsFood()
         {
             var fishPos = new Point(0, 0);
             var foodPos = new Point(10, 10);
+            mockFish.Setup(f => f.IsHungry).Returns(true);
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
             aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
@@ -264,7 +264,7 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            mockFish.Verify(f => f.ConsumeFood(mockFood.Object), Times.Once);
+            Assert.False(aquarium.Food.Select(f => f.Key).Contains(mockFood.Object));
         }
 
         [Test]
@@ -306,10 +306,23 @@ namespace AquariumLogic.AquariumClass
         }
 
         [Test]
-        [Ignore("Not implemented")]
         public void FoodPositionDoesNotChange_WhenOnBottom()
         {
+            var foodWeight = 2;
+            var startPos = new Point(0,aquarium.Size.Height-foodSize.Height-1);
+            var newMockFoodDrawable = new Mock<IDrawable>();
+            var newPos = startPos.AddVector(new Vector2(0, foodWeight));
+            mockFood.Setup(f => f.Weight).Returns(foodWeight);
+            newMockFoodDrawable.Setup(f => f.Position).Returns(newPos);
+            newMockFoodDrawable.Setup(f => f.Size).Returns(foodSize);
+            mockFoodDrawable.Setup(f => f.UpdatePosition(newPos)).Returns(newMockFoodDrawable.Object);
+            mockFoodDrawable.Setup(f => f.Position).Returns(startPos);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
+
+            aquarium.Iterate();
+
             
+            Assert.AreEqual(startPos, aquarium.Food.First(p => p.Key == mockFood.Object).Value.Position);
         }
 
         [Test]
