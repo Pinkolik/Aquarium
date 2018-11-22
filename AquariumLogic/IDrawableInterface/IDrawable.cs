@@ -9,7 +9,10 @@ namespace AquariumLogic.IDrawableInterface
 {
     public interface IDrawable
     {
+        Point Position { get; }
         Size Size { get; }
         Bitmap Texture { get; }
+
+        IDrawable UpdatePosition(Point newPosition);
     }
 }

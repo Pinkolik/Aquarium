@@ -34,9 +34,7 @@ namespace AquariumLogic.FishClass
             fish = new Fish(maxHealth,
                 timeToLiveInSeconds,
                 minVelocity,
-                maxVelocity,
-                new Size(100, 100),
-                null);
+                maxVelocity);
 
             food = new Mock<IFood>();
             healthValue = 50;

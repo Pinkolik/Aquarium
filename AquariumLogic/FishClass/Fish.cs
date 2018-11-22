@@ -11,7 +11,7 @@ using AquariumLogic.IDrawableInterface;
 
 namespace AquariumLogic.FishClass
 {
-    public class Fish : IFish, IDrawable
+    public class Fish : IFish
     {
         public double Health { get; private set; }
         public double MaxHealth { get; }
@@ -28,14 +28,11 @@ namespace AquariumLogic.FishClass
 
         public Fish(double maxHealth
             , int timeToLiveInSeconds,
-            int minVelocity, int maxVelocity,
-            Size size, Bitmap texture)
+            int minVelocity, int maxVelocity)
         {
             MaxHealth = maxHealth;
             Health = MaxHealth;
             this.timeToLiveInSeconds = timeToLiveInSeconds;
-            Size = size;
-            Texture = texture;
             this.minVelocity = minVelocity;
             this.maxVelocity = maxVelocity;
             healthTimer = new Timer(HealthTimerIntervalInMs);
@@ -91,8 +88,5 @@ namespace AquariumLogic.FishClass
         {
             Velocity = targetVector / targetVector.Length() * maxVelocity;
         }
-
-        public Size Size { get; }
-        public Bitmap Texture { get; }
     }
 }

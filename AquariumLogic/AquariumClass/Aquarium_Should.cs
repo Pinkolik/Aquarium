@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
+using AquariumLogic.IDrawableInterface;
 using AquariumLogic.PointExtensionClass;
 using Moq;
 using NUnit.Framework;
@@ -20,14 +21,22 @@ namespace AquariumLogic.AquariumClass
         private Aquarium aquarium;
         private Mock<IFish> mockFish;
         private Mock<IFood> mockFood;
-        private Size size;
+        private Mock<IDrawable> mockFishDrawable;
+        private Size aquariumSize;
+        private Size fishSize;
+        private Mock<IDrawable> mockFoodDrawable;
 
         [SetUp]
         public void SetUp()
         {
-            size = new Size(100, 100);
-            aquarium = new Aquarium(size);
+            aquariumSize = new Size(800, 600);
+            fishSize = new Size(60, 20);
+            aquarium = new Aquarium(aquariumSize);
             mockFish = new Mock<IFish>();
+            mockFishDrawable = new Mock<IDrawable>();
+            mockFishDrawable.Setup(f => f.Size).Returns(fishSize);
+            mockFoodDrawable = new Mock<IDrawable>();
+            mockFish.Setup(f => f.IsAlive).Returns(true);
             mockFood = new Mock<IFood>();
         }
 
@@ -41,7 +50,7 @@ namespace AquariumLogic.AquariumClass
         [Test]
         public void AquariumContainsFish_AfterAddingFish()
         {
-            aquarium.AddFish(mockFish.Object, new Point(0, 0));
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
 
             Assert.AreEqual(1, aquarium.Fishes.Count());
         }
@@ -52,7 +61,7 @@ namespace AquariumLogic.AquariumClass
             var autoIterate = true;
             var iterateIntervalInMs = 100;
             var iterationCount = 5;
-            var autoAquarium = new Aquarium(size, autoIterate, iterateIntervalInMs);
+            var autoAquarium = new Aquarium(aquariumSize, autoIterate, iterateIntervalInMs);
             Thread.Sleep(iterateIntervalInMs*iterationCount);
 
             Assert.AreEqual(iterationCount, autoAquarium.IterationCount);
@@ -62,16 +71,17 @@ namespace AquariumLogic.AquariumClass
         public void FishHasCorrectPos_AfterAddingFish()
         {
             var position = new Point(1, 2);
-            aquarium.AddFish(mockFish.Object, position);
+            mockFishDrawable.Setup(d => d.Position).Returns(position);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
 
-            Assert.AreEqual(aquarium.Fishes.First(pair => pair.Key == mockFish.Object).Value, position);
+            Assert.AreEqual(aquarium.Fishes.First(pair => pair.Key == mockFish.Object).Value.Position, position);
         }
 
         [Test]
         public void FishCountDoesNotChange_AfterAddingSameFish()
         {
-            aquarium.AddFish(mockFish.Object, new Point(0, 0));
-            aquarium.AddFish(mockFish.Object, new Point(0, 1));
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
 
             Assert.AreEqual(1, aquarium.Fishes.Count());
         }
@@ -79,15 +89,18 @@ namespace AquariumLogic.AquariumClass
         [Test]
         public void ThrowsException_WhenAddingFishOutOfBounds()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFish(mockFish.Object, new Point(-1, -1)));
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                aquarium.AddFish(mockFish.Object, new Point(size.Width, size.Height)));
+            mockFishDrawable.SetupSequence(d => d.Position)
+                .Returns(new Point(-1, -1))
+                .Returns(new Point(aquariumSize.Width, aquariumSize.Height));
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFish(mockFish.Object, mockFishDrawable.Object));
+            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFish(mockFish.Object, mockFishDrawable.Object));
         }
 
         [Test]
         public void AquariumContainsFood_AfterAddingFood()
         {
-            aquarium.AddFood(mockFood.Object, new Point(0, 0));
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
             Assert.AreEqual(1, aquarium.Food.Count());
         }
@@ -96,16 +109,17 @@ namespace AquariumLogic.AquariumClass
         public void FoodHasCorrectPos_AfterAddingFood()
         {
             var position = new Point(1, 2);
-            aquarium.AddFood(mockFood.Object, position);
+            mockFoodDrawable.Setup(d => d.Position).Returns(position);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
-            Assert.AreEqual(aquarium.Food.First(pair => pair.Key == mockFood.Object).Value, position);
+            Assert.AreEqual(aquarium.Food.First(pair => pair.Key == mockFood.Object).Value.Position, position);
         }
 
         [Test]
         public void FoodCountDoesNotChange_AfterAddingSameFood()
         {
-            aquarium.AddFood(mockFood.Object, new Point(0, 0));
-            aquarium.AddFood(mockFood.Object, new Point(0, 1));
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
             Assert.AreEqual(1, aquarium.Food.Count());
         }
@@ -113,15 +127,18 @@ namespace AquariumLogic.AquariumClass
         [Test]
         public void ThrowsException_WhenAddingFoodOutOfBounds()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFood(mockFood.Object, new Point(-1, -1)));
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                aquarium.AddFood(mockFood.Object, new Point(size.Width, size.Height)));
+            mockFoodDrawable.SetupSequence(d => d.Position)
+                .Returns(new Point(-1, -1))
+                .Returns(new Point(aquariumSize.Width, aquariumSize.Height));
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object));
+            Assert.Throws<ArgumentOutOfRangeException>(() => aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object));
         }
 
         [Test]
         public void FishStartLivingInvoked_WhenFishAdded()
         {
-            aquarium.AddFish(mockFish.Object, new Point(0,0));
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
             
             mockFish.Verify(f => f.StartLiving(), Times.Once);
         }
@@ -131,9 +148,11 @@ namespace AquariumLogic.AquariumClass
         {
             var fishPos = new Point(1, 1);
             var foodPos = new Point(4, 4);
+            mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
+            mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
             mockFish.Setup(f => f.IsHungry).Returns(true);
-            aquarium.AddFish(mockFish.Object, fishPos);
-            aquarium.AddFood(mockFood.Object, foodPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
             aquarium.Iterate();
 
@@ -148,10 +167,15 @@ namespace AquariumLogic.AquariumClass
             var fishPos = new Point(1, 1);
             var closeFoodPos = new Point(40, 40);
             var farFoodPos = new Point(50, 50);
+            var mockFarFoodDrawable = new Mock<IDrawable>();
             mockFish.Setup(f => f.IsHungry).Returns(true);
-            aquarium.AddFish(mockFish.Object, fishPos);
-            aquarium.AddFood(mockFood.Object, closeFoodPos);
-            aquarium.AddFood(farFood.Object, farFoodPos);
+            mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
+            mockFoodDrawable.Setup(f => f.Position).Returns(closeFoodPos);
+            mockFarFoodDrawable.Setup(f => f.Position).Returns(farFoodPos);
+
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
+            aquarium.AddFood(farFood.Object, mockFarFoodDrawable.Object);
 
             aquarium.Iterate();
 
@@ -160,17 +184,99 @@ namespace AquariumLogic.AquariumClass
         }
 
         [Test]
-        public void FishPositionChangesCorrectly_WhenIterate()
+        public void FishSetTargetVectorIsNotInvoked_WhenFishIsDead()
         {
-            var fishVector = new Vector2(2,3);
+            var fishVelocity = new Vector2(2,3);
             var startPos = new Point(0,0);
-            mockFish.Setup(f => f.Velocity).Returns(fishVector);
-            aquarium.AddFish(mockFish.Object, startPos);
+            mockFish.Setup(f => f.Velocity).Returns(fishVelocity);
+            mockFish.Setup(f => f.IsHungry).Returns(true);
+            mockFish.Setup(f => f.IsAlive).Returns(false);
+            mockFishDrawable.Setup(f => f.Position).Returns(startPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
 
             aquarium.Iterate();
 
-            var expected = startPos.AddVector(fishVector);
-            Assert.AreEqual(expected, aquarium.Fishes.First(p => p.Key == mockFish.Object).Value);
+            mockFish.Verify(f => f.SetTargetVector(It.IsAny<Vector2>()), Times.Never);
+        }
+
+        [Test]
+        public void FishSetTargetVectorIsNotInvoked_WhenNoFood()
+        {
+            var fishVelocity = new Vector2(2,3);
+            var startPos = new Point(0,0);
+            mockFish.Setup(f => f.Velocity).Returns(fishVelocity);
+            mockFish.Setup(f => f.IsHungry).Returns(true);
+            mockFishDrawable.Setup(f => f.Position).Returns(startPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            mockFish.Verify(f => f.SetTargetVector(It.IsAny<Vector2>()), Times.Never);
+        }
+
+        [Test]
+        public void FishConsumesFood_WhenFoodInsideFish()
+        {
+            var fishPos = new Point(0, 0);
+            var foodPos = new Point(10, 10);
+            mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
+            mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            mockFish.Verify(f => f.ConsumeFood(mockFood.Object), Times.Once);
+        }
+
+        [Test]
+        public void FoodWasConsumed_WhenFoodInsideFish()
+        {
+            var fishPos = new Point(0, 0);
+            var foodPos = new Point(10, 10);
+            mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
+            mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            mockFood.Verify(f => f.Consume(), Times.Once);
+        }
+
+        [Test]
+        [Ignore("Not implemented")]
+        public void FoodDeleted_AfterFishEatsFood()
+        {
+            var fishPos = new Point(0, 0);
+            var foodPos = new Point(10, 10);
+            mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
+            mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            mockFish.Verify(f => f.ConsumeFood(mockFood.Object), Times.Once);
+        }
+
+        [Test]
+        public void FishPositionChangesCorrectly_WhenIterate()
+        {
+            var fishVelocity = new Vector2(2,3);
+            var startPos = new Point(0,0);
+            var expected = startPos.AddVector(fishVelocity);
+            var newMockFishDrawable = new Mock<IDrawable>();
+            mockFish.Setup(f => f.Velocity).Returns(fishVelocity);
+            mockFishDrawable.Setup(f => f.Position).Returns(startPos);
+            newMockFishDrawable.Setup(f => f.Position).Returns(expected);
+            mockFishDrawable.Setup(f => f.UpdatePosition(expected)).Returns(newMockFishDrawable.Object);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            
+            Assert.AreEqual(expected, aquarium.Fishes.First(p => p.Key == mockFish.Object).Value.Position);
         }
 
         [Test]
@@ -178,13 +284,39 @@ namespace AquariumLogic.AquariumClass
         {
             var foodWeight = 2;
             var startPos = new Point(0,0);
+            var newMockFoodDrawable = new Mock<IDrawable>();
+            var expected = startPos.AddVector(new Vector2(0, foodWeight));
             mockFood.Setup(f => f.Weight).Returns(foodWeight);
-            aquarium.AddFood(mockFood.Object, startPos);
+            newMockFoodDrawable.Setup(f => f.Position).Returns(expected);
+            mockFoodDrawable.Setup(f => f.UpdatePosition(expected)).Returns(newMockFoodDrawable.Object);
+            mockFoodDrawable.Setup(f => f.Position).Returns(startPos);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
             aquarium.Iterate();
 
-            var expected = startPos.AddVector(new Vector2(0, foodWeight));
-            Assert.AreEqual(expected, aquarium.Food.First(p => p.Key == mockFood.Object).Value);
+            
+            Assert.AreEqual(expected, aquarium.Food.First(p => p.Key == mockFood.Object).Value.Position);
+        }
+
+        [Test]
+        [Ignore("Not implemented")]
+        public void FoodPositionDoesNotChange_WhenOnBottom()
+        {
+            
+        }
+
+        [Test]
+        [Ignore("Not implemented")]
+        public void FishStaysInBounds_WhenIsMovingOutOfBounds()
+        {
+                
+        }
+
+        [Test]
+        [Ignore("Not implemented")]
+        public void FishVelocityChanged_WhenFishHitsBounds()
+        {
+            
         }
     }
 }

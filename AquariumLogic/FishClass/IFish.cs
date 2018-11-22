@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AquariumLogic.FoodClass;
 using System.Numerics;
+using AquariumLogic.IDrawableInterface;
 
 namespace AquariumLogic.FishClass
 {

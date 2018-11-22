@@ -6,18 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
+using AquariumLogic.IDrawableInterface;
 
 namespace AquariumLogic.AquariumClass
 {
     public interface IAquarium
     {
-        IEnumerable<KeyValuePair<IFish, Point>> Fishes { get; }
-        IEnumerable<KeyValuePair<IFood, Point>> Food { get; }
+        IEnumerable<KeyValuePair<IFish, IDrawable>> Fishes { get; }
+        IEnumerable<KeyValuePair<IFood, IDrawable>> Food { get; }
         long IterationCount { get; }
         int IterateIntervalInMs { get; }
+        Size Size { get; }
+        Bitmap BackgroundImage { get; }
 
-        void AddFish(IFish fish, Point position);
-        void AddFood(IFood food, Point position);
+        void AddFish(IFish fish, IDrawable drawable);
+        void AddFood(IFood food, IDrawable drawable);
         void Iterate();
     }
 }

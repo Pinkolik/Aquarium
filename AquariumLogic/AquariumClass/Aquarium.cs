@@ -10,17 +10,19 @@ using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
 using AquariumLogic.IDrawableInterface;
 using AquariumLogic.PointExtensionClass;
+using AquariumLogic.SizeExtensionClass;
+using Castle.Core.Internal;
 
 namespace AquariumLogic.AquariumClass
 {
-    public class Aquarium : IAquarium, IDrawable
+    public class Aquarium : IAquarium
     {
-        public IEnumerable<KeyValuePair<IFish, Point>> Fishes => fishesDictionary.AsEnumerable();
-        public IEnumerable<KeyValuePair<IFood, Point>> Food => foodDictionary.AsEnumerable();
+        public IEnumerable<KeyValuePair<IFish, IDrawable>> Fishes => fishesDictionary.AsEnumerable();
+        public IEnumerable<KeyValuePair<IFood, IDrawable>> Food => foodDictionary.AsEnumerable();
         public long IterationCount { get; private set; }
         public int IterateIntervalInMs { get; }
-        private readonly Dictionary<IFish, Point> fishesDictionary = new Dictionary<IFish, Point>();
-        private readonly Dictionary<IFood, Point> foodDictionary = new Dictionary<IFood, Point>();
+        private readonly Dictionary<IFish, IDrawable> fishesDictionary = new Dictionary<IFish, IDrawable>();
+        private readonly Dictionary<IFood, IDrawable> foodDictionary = new Dictionary<IFood, IDrawable>();
         private readonly Timer autoIterateTimer = new Timer();
 
 
@@ -40,21 +42,23 @@ namespace AquariumLogic.AquariumClass
             Iterate();
         }
 
-        public void AddFish(IFish fish, Point position)
+        public Bitmap BackgroundImage { get; }
+
+        public void AddFish(IFish fish, IDrawable drawable)
         {
-            if (IsOutOfBounds(position))
+            if (Size.IsOutOfBounds(drawable))
                 throw new ArgumentOutOfRangeException();
             if (fishesDictionary.ContainsKey(fish)) return;
-            fishesDictionary.Add(fish, position);
+            fishesDictionary.Add(fish, drawable);
             fish.StartLiving();
         }
 
-        public void AddFood(IFood food, Point position)
+        public void AddFood(IFood food, IDrawable drawable)
         {
-            if (IsOutOfBounds(position))
+            if (Size.IsOutOfBounds(drawable))
                 throw new ArgumentOutOfRangeException();
             if (!foodDictionary.ContainsKey(food))
-                foodDictionary.Add(food, position);
+                foodDictionary.Add(food, drawable);
         }
 
         public void Iterate()
@@ -70,8 +74,9 @@ namespace AquariumLogic.AquariumClass
         {
             foreach (var food in foodDictionary.Keys.ToList())
             {
-                var foodPosition = foodDictionary[food];
-                foodDictionary[food] = foodPosition.AddVector(new Vector2(0, (float) food.Weight));
+                var foodDrawable = foodDictionary[food];
+                foodDictionary[food] = foodDictionary[food]
+                    .UpdatePosition(foodDrawable.Position.AddVector(new Vector2(0, (float) food.Weight)));
             }
         }
 
@@ -79,26 +84,32 @@ namespace AquariumLogic.AquariumClass
         {
             foreach (var fish in fishesDictionary.Keys.ToList())
             {
-                var fishPosition = fishesDictionary[fish];
-                if (fish.IsHungry)
+                if (!fish.IsAlive) continue;;
+                var fishDrawable = fishesDictionary[fish];
+                if (!foodDictionary.IsNullOrEmpty() && fish.IsHungry)
                 {
-                    var foodPosition = FindClosestFood(fishPosition);
-                    fish.SetTargetVector(fishPosition.GetVectorToPoint(foodPosition));
+                    //if (IsInside())
+                    var foodDrawable = FindClosestFood(fishDrawable);
+                    fish.SetTargetVector(fishDrawable.Position.GetVectorToPoint(foodDrawable.Position));
                 }
-                fishesDictionary[fish] = fishPosition.AddVector(fish.Velocity);
+
+                fishesDictionary[fish] =
+                    fishesDictionary[fish].UpdatePosition(fishDrawable.Position.AddVector(fish.Velocity));
             }
         }
 
-        private Point FindClosestFood(Point fishPosition)
+        private IDrawable FindClosestFood(IDrawable fishDrawable)
         {
             var minDistance = float.MaxValue;
-            var result = new Point(0,0);
-            foreach (var foodPosition in foodDictionary.Values)
+            var fishCenterPoint = new Point(fishDrawable.Size.Width + fishDrawable.Position.Y,
+                fishDrawable.Size.Height + fishDrawable.Position.Y);
+            IDrawable result = null;
+            foreach (var foodDrawable in foodDictionary.Values)
             {
-                var distance = fishPosition.GetVectorToPoint(foodPosition).Length();
+                var distance = fishDrawable.Position.GetVectorToPoint(foodDrawable.Position).Length();
                 if (!(distance < minDistance)) continue;
                 minDistance = distance;
-                result = foodPosition;
+                result = foodDrawable;
             }
 
             return result;
@@ -108,8 +119,6 @@ namespace AquariumLogic.AquariumClass
         {
             return position.X < 0 || position.Y < 0 || position.X >= Size.Width || position.Y >= Size.Height;
         }
-
         public Size Size { get; }
-        public Bitmap Texture { get; }
     }
 }
