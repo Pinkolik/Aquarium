@@ -84,13 +84,18 @@ namespace AquariumLogic.AquariumClass
         {
             foreach (var fish in fishesDictionary.Keys.ToList())
             {
-                if (!fish.IsAlive) continue;;
+                if (!fish.IsAlive) continue;
                 var fishDrawable = fishesDictionary[fish];
                 if (!foodDictionary.IsNullOrEmpty() && fish.IsHungry)
                 {
                     //if (IsInside())
-                    var foodDrawable = FindClosestFood(fishDrawable);
-                    fish.SetTargetVector(fishDrawable.GetCenterPoint().GetVectorToPoint(foodDrawable.GetCenterPoint()));
+                    var foodPair = FindClosestFood(fishDrawable);
+                    var foodDrawable = foodPair.Value;
+                    if (fishDrawable.HasCollisionWith(foodDrawable))
+                        fish.ConsumeFood(foodPair.Key);
+                    else
+                        fish.SetTargetVector(fishDrawable.GetCenterPoint()
+                            .GetVectorToPoint(foodDrawable.GetCenterPoint()));
                 }
 
                 fishesDictionary[fish] =
@@ -98,18 +103,19 @@ namespace AquariumLogic.AquariumClass
             }
         }
 
-        private IDrawable FindClosestFood(IDrawable fishDrawable)
+        private KeyValuePair<IFood, IDrawable> FindClosestFood(IDrawable fishDrawable)
         {
             var minDistance = float.MaxValue;
             var fishCenterPoint = fishDrawable.GetCenterPoint();
-            IDrawable result = null;
-            foreach (var foodDrawable in foodDictionary.Values)
+            var result = new KeyValuePair<IFood, IDrawable>();
+            foreach (var foodPair in foodDictionary)
             {
+                var foodDrawable = foodPair.Value;
                 var foodCenterPoint = foodDrawable.GetCenterPoint();
                 var distance = fishCenterPoint.GetVectorToPoint(foodCenterPoint).Length();
                 if (!(distance < minDistance)) continue;
                 minDistance = distance;
-                result = foodDrawable;
+                result = foodPair;
             }
 
             return result;

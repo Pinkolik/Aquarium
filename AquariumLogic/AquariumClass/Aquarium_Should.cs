@@ -225,6 +225,7 @@ namespace AquariumLogic.AquariumClass
         {
             var fishPos = new Point(0, 0);
             var foodPos = new Point(10, 10);
+            mockFish.Setup(f => f.IsHungry).Returns(true);
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
             aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
@@ -236,7 +237,7 @@ namespace AquariumLogic.AquariumClass
         }
 
         [Test]
-        public void FoodWasConsumed_WhenFoodInsideFish()
+        public void FishDoesNotConsumeFood_WhenFoodInsideFishAndFishIsNotHungry()
         {
             var fishPos = new Point(0, 0);
             var foodPos = new Point(10, 10);
@@ -247,7 +248,7 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            mockFood.Verify(f => f.Consume(), Times.Once);
+            mockFish.Verify(f => f.ConsumeFood(It.IsAny<IFood>()), Times.Never);
         }
 
         [Test]
