@@ -153,6 +153,7 @@ namespace AquariumLogic.AquariumClass
             var foodPos = new Point(50, 50);
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
+            mockFoodDrawable.Setup(f => f.UpdatePosition(It.IsAny<Point>())).Returns(mockFoodDrawable.Object);
             mockFish.Setup(f => f.IsHungry).Returns(true);
             aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
             aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
@@ -175,9 +176,10 @@ namespace AquariumLogic.AquariumClass
             mockFish.Setup(f => f.IsHungry).Returns(true);
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(closeFoodPos);
+            mockFoodDrawable.Setup(f => f.UpdatePosition(It.IsAny<Point>())).Returns(mockFoodDrawable.Object);
             mockFarFoodDrawable.Setup(f => f.Position).Returns(farFoodPos);
             mockFarFoodDrawable.Setup(f => f.Size).Returns(foodSize);
-
+            mockFarFoodDrawable.Setup(f => f.UpdatePosition(It.IsAny<Point>())).Returns(mockFarFoodDrawable.Object);
             aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
             aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
             aquarium.AddFood(farFood.Object, mockFarFoodDrawable.Object);
@@ -243,8 +245,9 @@ namespace AquariumLogic.AquariumClass
             var foodPos = new Point(10, 10);
             mockFishDrawable.Setup(f => f.Position).Returns(fishPos);
             mockFoodDrawable.Setup(f => f.Position).Returns(foodPos);
+            mockFoodDrawable.Setup(f => f.UpdatePosition(It.IsAny<Point>())).Returns(mockFoodDrawable.Object);
             aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
-            aquarium.AddFood(mockFood.Object, mockFishDrawable.Object);
+            aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
             aquarium.Iterate();
 
