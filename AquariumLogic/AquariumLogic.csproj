@@ -75,8 +75,10 @@
     <Compile Include="IDrawableInterface\IDrawable.cs" />
     <Compile Include="IDrawableInterface\IDrawableExtension.cs" />
     <Compile Include="PointExtensionClass\PointExtension.cs" />
+    <Compile Include="PointExtensionClass\PointExtension_Should.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SizeExtensionClass\SizeExtension.cs" />
+    <Compile Include="SizeExtensionClass\SizeExtension_Should.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
