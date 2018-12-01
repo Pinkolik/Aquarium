@@ -103,8 +103,12 @@ namespace AquariumLogic.AquariumClass
                             .GetVectorToPoint(foodDrawable.GetCenterPoint()));
                 }
 
-                fishesDictionary[fish] =
-                    fishesDictionary[fish].UpdatePosition(fishDrawable.Position.AddVector(fish.Velocity));
+                var newPos = fishDrawable.Position.AddVector(fish.Velocity);
+                var newFishDrawable = fishesDictionary[fish].UpdatePosition(newPos);
+                if (!Size.IsOutOfBounds(newFishDrawable))
+                    fishesDictionary[fish] = newFishDrawable;
+                else
+                    fish.ChangeVelocity();
             }
         }
 

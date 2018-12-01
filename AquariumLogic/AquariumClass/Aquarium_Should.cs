@@ -66,6 +66,8 @@ namespace AquariumLogic.AquariumClass
 
             mockFood = new Mock<IFood>();
             mockFood.Setup(f => f.Weight).Returns(foodWeight);
+
+            SetUpMocksForMovingFish(fishPos, fishPos.AddVector(fishVelocity));
         }
 
         [Test]
@@ -318,15 +320,47 @@ namespace AquariumLogic.AquariumClass
         }
 
         [Test]
-        [Ignore("Not implemented")]
-        public void FishStaysInBounds_WhenIsMovingOutOfBounds()
+        public void FishStaysInBounds_WhenIsMovingOutOfBounds_BottomRight()
         {
+            fishPos = new Point(aquariumSize.Width - fishSize.Width - 1, aquariumSize.Height - fishSize.Height - 1);
+            var newPos = fishPos.AddVector(fishVelocity);
+            SetUpMocksForMovingFish(fishPos, newPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            var actual = aquarium.Fishes.First().Value.Position;
+            Assert.True(actual.X + fishSize.Width < aquariumSize.Width 
+                        && actual.Y + fishSize.Height < aquariumSize.Height);
         }
 
         [Test]
-        [Ignore("Not implemented")]
+        public void FishStaysInBounds_WhenIsMovingOutOfBounds_UpLeft()
+        {
+            fishVelocity = new Vector2(-2, -3);
+            mockFish.Setup(f => f.Velocity).Returns(fishVelocity);
+            fishPos = new Point(0, 0);
+            var newPos = fishPos.AddVector(fishVelocity);
+            SetUpMocksForMovingFish(fishPos, newPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            var actual = aquarium.Fishes.First().Value.Position;
+            Assert.True(actual.X >=0 && actual.Y >=0);
+        }
+
+        [Test]
         public void FishVelocityChanged_WhenFishHitsBounds()
         {
+            fishPos = new Point(aquariumSize.Width - fishSize.Width - 1, aquariumSize.Height - fishSize.Height - 1);
+            var newPos = fishPos.AddVector(fishVelocity);
+            SetUpMocksForMovingFish(fishPos, newPos);
+            aquarium.AddFish(mockFish.Object, mockFishDrawable.Object);
+
+            aquarium.Iterate();
+
+            mockFish.Verify(f => f.ChangeVelocity(), Times.Once);
         }
 
         private void SetUpMocksForMovingFood(Point startPos, Point newPos)
