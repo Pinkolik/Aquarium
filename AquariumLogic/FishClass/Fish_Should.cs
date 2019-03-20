@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using AquariumLogic.FoodClass;
 using AquariumLogic.IDrawableInterface;
 using Moq;
@@ -44,7 +45,7 @@ namespace AquariumLogic.FishClass
         [Test]
         public void FishVelocityIsZero_BeforeChangeVelocity()
         {
-            Assert.AreEqual(new Vector2(0,0), fish.Velocity);
+            Assert.AreEqual(new Vector(0,0), fish.Velocity);
         }
 
         [Test]
@@ -53,16 +54,16 @@ namespace AquariumLogic.FishClass
         {
             fish.ChangeVelocity();
 
-            Assert.GreaterOrEqual(fish.Velocity.Length(), minVelocity);
-            Assert.LessOrEqual(fish.Velocity.Length(), maxVelocity);
+            Assert.GreaterOrEqual(fish.Velocity.Length, minVelocity);
+            Assert.LessOrEqual(fish.Velocity.Length, maxVelocity);
         }
 
         [Test]
         public void FishVelocityDirectionIsCorrect_WhenSetTargetVector()
         {
-            float targetX = 100;
-            float targetY = 200;
-            var targetVector = new Vector2(targetX, targetY);
+            double targetX = 100;
+            double targetY = 200;
+            var targetVector = new Vector(targetX, targetY);
 
             fish.SetTargetVector(targetVector);
 
@@ -74,13 +75,13 @@ namespace AquariumLogic.FishClass
         [Test]
         public void FishVelocityLengthIsMax_WhenSetTargetVector()
         {
-            float targetX = 100;
-            float targetY = 200;
-            var targetVector = new Vector2(targetX, targetY);
+            double targetX = 100;
+            double targetY = 200;
+            var targetVector = new Vector(targetX, targetY);
 
             fish.SetTargetVector(targetVector);
 
-            Assert.AreEqual(maxVelocity, fish.Velocity.Length());
+            Assert.AreEqual(maxVelocity, fish.Velocity.Length, 0.00001);
         }
 
         [Test]
@@ -107,7 +108,7 @@ namespace AquariumLogic.FishClass
         [Test]
         public void FishHasZeroSpeed_BeforeStartsLiving()
         {
-            Assert.AreEqual(new Vector2(0, 0), fish.Velocity);
+            Assert.AreEqual(new Vector(0, 0), fish.Velocity);
         }
 
         [Test]

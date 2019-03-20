@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using AquariumLogic.IDrawableInterface;
 
 namespace AquariumLogic.AquariumClass
@@ -12,18 +13,18 @@ namespace AquariumLogic.AquariumClass
     {
         public Point Position { get; }
         public Size Size { get; }
-        public Bitmap Texture { get; }
+        public Uri TextureUri { get; }
 
-        public AquariumObject(Point position, Size size, Bitmap texture)
+        public AquariumObject(Point position, Size size, Uri textureUri)
         {
             Position = position;
             Size = size;
-            Texture = texture;
+            TextureUri = textureUri;
         }
 
         public IDrawable UpdatePosition(Point newPosition)
         {
-            return new AquariumObject(newPosition, Size, Texture);
+            return new AquariumObject(newPosition, Size, TextureUri);
         }
     }
 }

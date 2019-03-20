@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
+using System.Windows;
 using AquariumLogic.FoodClass;
 using AquariumLogic.IDrawableInterface;
 
@@ -15,7 +16,7 @@ namespace AquariumLogic.FishClass
     {
         public double Health { get; private set; }
         public double MaxHealth { get; }
-        public Vector2 Velocity { get; private set; }
+        public Vector Velocity { get; private set; }
         public bool IsAlive { get; private set; } = true;
         public bool IsHungry { get; private set; }
         public event EventHandler OnHungry;
@@ -73,7 +74,7 @@ namespace AquariumLogic.FishClass
             var velocityLength = random.Next(minVelocity, maxVelocity + 1);
             var newX = (float) (velocityLength * Math.Cos(directionAngle));
             var newY = (float) (velocityLength * Math.Sin(directionAngle));
-            Velocity = new Vector2(newX, newY);
+            Velocity = new Vector(newX, newY);
         }
 
         public void ConsumeFood(IFood food)
@@ -84,9 +85,9 @@ namespace AquariumLogic.FishClass
             food.Consume();
         }
 
-        public void SetTargetVector(Vector2 targetVector)
+        public void SetTargetVector(Vector targetVector)
         {
-            Velocity = targetVector / targetVector.Length() * maxVelocity;
+            Velocity = targetVector / targetVector.Length * maxVelocity;
         }
     }
 }

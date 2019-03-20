@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -24,7 +25,7 @@ namespace AquariumLogic.PointExtensionClass
         [Test]
         public void CorrectPoint_WhenAddPositiveVector()
         {
-            var vector = new Vector2(1,3);
+            var vector = new Vector(1,3);
 
             var actual = point.AddVector(vector);
 
@@ -34,7 +35,7 @@ namespace AquariumLogic.PointExtensionClass
         [Test]
         public void CorrectPoint_WhenAddNegativeVector()
         {
-            var vector = new Vector2(-3,-2);
+            var vector = new Vector(-3,-2);
 
             var actual = point.AddVector(vector);
 
@@ -48,7 +49,7 @@ namespace AquariumLogic.PointExtensionClass
 
             var actual = point.GetVectorToPoint(newPoint);
 
-            var expected = new Vector2(newPoint.X-point.X, newPoint.Y-point.Y); 
+            var expected = new Vector(newPoint.X-point.X, newPoint.Y-point.Y); 
             Assert.AreEqual(expected, actual);
         }
     }

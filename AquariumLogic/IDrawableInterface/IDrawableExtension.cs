@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using AquariumLogic.PointExtensionClass;
 using AquariumLogic.SizeExtensionClass;
 
@@ -22,12 +23,12 @@ namespace AquariumLogic.IDrawableInterface
         {
             var containerPos = drawable.Position;
             var containerSize = drawable.Size;
-            var relativeObjPos = obj.Position.AddVector(new Vector2(-containerPos.X, -containerPos.Y));
+            var relativeObjPos = obj.Position.AddVector(new Vector(-containerPos.X, -containerPos.Y));
             return !(containerSize.IsOutOfBounds(relativeObjPos)
-                    && containerSize.IsOutOfBounds(relativeObjPos.AddVector(new Vector2(obj.Size.Width, 0)))
+                    && containerSize.IsOutOfBounds(relativeObjPos.AddVector(new Vector(obj.Size.Width, 0)))
                     && containerSize.IsOutOfBounds(
-                        relativeObjPos.AddVector(new Vector2(obj.Size.Width, obj.Size.Height)))
-                    && containerSize.IsOutOfBounds(relativeObjPos.AddVector(new Vector2(0, obj.Size.Height))));
+                        relativeObjPos.AddVector(new Vector(obj.Size.Width, obj.Size.Height)))
+                    && containerSize.IsOutOfBounds(relativeObjPos.AddVector(new Vector(0, obj.Size.Height))));
         }
     }
 }

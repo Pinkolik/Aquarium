@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO.Packaging;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
 using AquariumLogic.IDrawableInterface;
@@ -30,7 +32,7 @@ namespace AquariumLogic.AquariumClass
         private Size foodSize;
         private Point fishPos;
         private int foodWeight;
-        private Vector2 fishVelocity;
+        private Vector fishVelocity;
 
         [SetUp]
         public void SetUp()
@@ -38,12 +40,12 @@ namespace AquariumLogic.AquariumClass
             aquariumSize = new Size(800, 600);
             fishSize = new Size(60, 20);
             fishPos = new Point(0, 0);
-            fishVelocity = new Vector2(2, 3);
+            fishVelocity = new Vector(2, 3);
 
             foodWeight = 2;
             foodSize = new Size(5, 5);
 
-            aquarium = new Aquarium(aquariumSize);
+            aquarium = new Aquarium(aquariumSize, null);
 
             mockFish = new Mock<IFish>();
             mockFish.Setup(f => f.IsAlive).Returns(true);
@@ -91,7 +93,8 @@ namespace AquariumLogic.AquariumClass
             var autoIterate = true;
             var iterateIntervalInMs = 100;
             var iterationCount = 5;
-            var autoAquarium = new Aquarium(aquariumSize, autoIterate, iterateIntervalInMs);
+            var autoAquarium = new Aquarium(aquariumSize, null, autoIterate,
+                iterateIntervalInMs);
             Thread.Sleep(iterateIntervalInMs * iterationCount);
 
             Assert.AreEqual(iterationCount, autoAquarium.IterationCount);
@@ -222,7 +225,7 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            mockFish.Verify(f => f.SetTargetVector(It.IsAny<Vector2>()), Times.Never);
+            mockFish.Verify(f => f.SetTargetVector(It.IsAny<Vector>()), Times.Never);
         }
 
         [Test]
@@ -233,7 +236,7 @@ namespace AquariumLogic.AquariumClass
 
             aquarium.Iterate();
 
-            mockFish.Verify(f => f.SetTargetVector(It.IsAny<Vector2>()), Times.Never);
+            mockFish.Verify(f => f.SetTargetVector(It.IsAny<Vector>()), Times.Never);
         }
 
         [Test]
@@ -295,7 +298,7 @@ namespace AquariumLogic.AquariumClass
         public void FoodPositionChangesCorrectly_WhenIterate()
         {
             var startPos = new Point(0, 0);
-            var expected = startPos.AddVector(new Vector2(0, foodWeight));
+            var expected = startPos.AddVector(new Vector(0, foodWeight));
             SetUpMocksForMovingFood(startPos, expected);
             aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
@@ -309,7 +312,7 @@ namespace AquariumLogic.AquariumClass
         public void FoodPositionDoesNotChange_WhenOnBottom()
         {
             var startPos = new Point(0, aquarium.Size.Height - foodSize.Height - 1);
-            var newPos = startPos.AddVector(new Vector2(0, foodWeight));
+            var newPos = startPos.AddVector(new Vector(0, foodWeight));
             SetUpMocksForMovingFood(startPos, newPos);
             aquarium.AddFood(mockFood.Object, mockFoodDrawable.Object);
 
@@ -337,7 +340,7 @@ namespace AquariumLogic.AquariumClass
         [Test]
         public void FishStaysInBounds_WhenIsMovingOutOfBounds_UpLeft()
         {
-            fishVelocity = new Vector2(-2, -3);
+            fishVelocity = new Vector(-2, -3);
             mockFish.Setup(f => f.Velocity).Returns(fishVelocity);
             fishPos = new Point(0, 0);
             var newPos = fishPos.AddVector(fishVelocity);

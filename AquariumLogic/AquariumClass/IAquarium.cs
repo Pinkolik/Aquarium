@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace AquariumLogic.AquariumClass
         long IterationCount { get; }
         int IterateIntervalInMs { get; }
         Size Size { get; }
-        Bitmap BackgroundImage { get; }
+        Uri BackgroundImageUri { get; }
 
         void AddFish(IFish fish, IDrawable drawable);
         void AddFood(IFood food, IDrawable drawable);

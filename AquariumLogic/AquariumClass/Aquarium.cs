@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
 using AquariumLogic.FishClass;
 using AquariumLogic.FoodClass;
 using AquariumLogic.IDrawableInterface;
@@ -26,9 +27,10 @@ namespace AquariumLogic.AquariumClass
         private readonly Timer autoIterateTimer = new Timer();
 
 
-        public Aquarium(Size size, bool autoIterate = false, int iterateIntervalInMs = 100)
+        public Aquarium(Size size, Uri backgroundImageUri, bool autoIterate = false, int iterateIntervalInMs = 100)
         {
             Size = size;
+            BackgroundImageUri = backgroundImageUri;
             IterateIntervalInMs = iterateIntervalInMs;
             if (autoIterate)
                 InitializeAutoIterateTimer(iterateIntervalInMs);
@@ -42,7 +44,7 @@ namespace AquariumLogic.AquariumClass
             Iterate();
         }
 
-        public Bitmap BackgroundImage { get; }
+        public Uri BackgroundImageUri { get; }
 
         public void AddFish(IFish fish, IDrawable drawable)
         {
@@ -75,7 +77,7 @@ namespace AquariumLogic.AquariumClass
             foreach (var food in foodDictionary.Keys.ToList())
             {
                 var foodDrawable = foodDictionary[food];
-                var newPos = foodDrawable.Position.AddVector(new Vector2(0, (float) food.Weight));
+                var newPos = foodDrawable.Position.AddVector(new Vector(0, (float) food.Weight));
                 var newFoodDrawable = foodDictionary[food].UpdatePosition(newPos);
                 if (!Size.IsOutOfBounds(newFoodDrawable))
                     foodDictionary[food] = newFoodDrawable;
@@ -114,14 +116,14 @@ namespace AquariumLogic.AquariumClass
 
         private KeyValuePair<IFood, IDrawable> FindClosestFood(IDrawable fishDrawable)
         {
-            var minDistance = float.MaxValue;
+            var minDistance = double.MaxValue;
             var fishCenterPoint = fishDrawable.GetCenterPoint();
             var result = new KeyValuePair<IFood, IDrawable>();
             foreach (var foodPair in foodDictionary)
             {
                 var foodDrawable = foodPair.Value;
                 var foodCenterPoint = foodDrawable.GetCenterPoint();
-                var distance = fishCenterPoint.GetVectorToPoint(foodCenterPoint).Length();
+                var distance = fishCenterPoint.GetVectorToPoint(foodCenterPoint).Length;
                 if (!(distance < minDistance)) continue;
                 minDistance = distance;
                 result = foodPair;

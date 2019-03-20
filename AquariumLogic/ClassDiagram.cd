@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AquariumLogic.AquariumClass.Aquarium">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAQAAIAAEAAwAFAABAEAAAIAAAAAQAAQACAAgAAEAA=</HashCode>
+      <FileName>AquariumClass\Aquarium.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AquariumLogic.AquariumClass.AquariumObject">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgCAgAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>AquariumClass\AquariumObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AquariumLogic.FishClass.Fish">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EQCICIEAAQAACAAQAAAAAAEAAAAAgAACABABCABEAAA=</HashCode>
+      <FileName>FishClass\Fish.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AquariumLogic.FoodClass.Food">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAIAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FoodClass\Food.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="AquariumLogic.IDrawableInterface.IDrawable">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgCAgAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>IDrawableInterface\IDrawable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

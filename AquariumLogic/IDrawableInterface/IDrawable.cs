@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace AquariumLogic.IDrawableInterface
 {
@@ -11,7 +12,7 @@ namespace AquariumLogic.IDrawableInterface
     {
         Point Position { get; }
         Size Size { get; }
-        Bitmap Texture { get; }
+        Uri TextureUri { get; }
 
         IDrawable UpdatePosition(Point newPosition);
     }

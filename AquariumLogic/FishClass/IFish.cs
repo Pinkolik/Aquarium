@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AquariumLogic.FoodClass;
 using System.Numerics;
+using System.Windows;
 using AquariumLogic.IDrawableInterface;
 
 namespace AquariumLogic.FishClass
@@ -13,7 +14,7 @@ namespace AquariumLogic.FishClass
     {
         double Health { get; }
         double MaxHealth { get; }
-        Vector2 Velocity { get;  }
+        Vector Velocity { get;  }
         bool IsAlive { get; }
         bool IsHungry { get; }
         event EventHandler OnHungry;
@@ -21,6 +22,6 @@ namespace AquariumLogic.FishClass
         void StartLiving();
         void ChangeVelocity();
         void ConsumeFood(IFood food);
-        void SetTargetVector(Vector2 targetVector);
+        void SetTargetVector(Vector targetVector);
     }
 }
