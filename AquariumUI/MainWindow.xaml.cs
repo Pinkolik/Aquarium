@@ -17,6 +17,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using AquariumLogic.AquariumClass;
 using AquariumLogic.FishClass;
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 
 
 namespace AquariumUI
@@ -33,7 +35,6 @@ namespace AquariumUI
         {
             InitializeComponent();
             //ImageDrawingExample();
-            InitializeAquarium();
         }
 
         public void ImageDrawingExample()
@@ -97,7 +98,7 @@ namespace AquariumUI
 
         public void InitializeAquarium()
         {
-            var aquariumSize = new Size((int)BackgroundImage.ActualWidth, (int)BackgroundImage.ActualHeight);
+            var aquariumSize = new Size(this.ActualWidth, this.ActualHeight);
             aquarium = new Aquarium(aquariumSize, new Uri("pack://application:,,,/Resources/background.png"));
             refreshTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 0, 0, 100)};
             refreshTimer.Tick += RedrawAquarium;
@@ -115,22 +116,44 @@ namespace AquariumUI
 
         private void RedrawAquarium(object sender, EventArgs args)
         {
+            aquarium.Iterate();
+
             DrawingGroup aquariumImages = new DrawingGroup();
 
             ImageDrawing background = new ImageDrawing();
             background.Rect = new Rect(aquarium.Size);
+            background.ImageSource = new BitmapImage(aquarium.BackgroundImageUri);
+            aquariumImages.Children.Add(background);
 
-            BackgroundImage.Source = new BitmapImage(aquarium.BackgroundImageUri);
+            foreach (var fish in aquarium.Fishes)
+            {
+                ImageDrawing fishImage = new ImageDrawing();
+                fishImage.Rect = new Rect(fish.Value.Position, fish.Value.Size);
+                fishImage.ImageSource = new BitmapImage(fish.Value.TextureUri);
+                aquariumImages.Children.Add(fishImage);
+            }
+
+            DrawingImage drawingImageSource = new DrawingImage(aquariumImages);
+
+            drawingImageSource.Freeze();
+
+            BackgroundImage.Source = drawingImageSource;
         }
 
         private void BackgroundImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (aquarium == null) InitializeAquarium();
             var fish = new Fish(100, 180, 0, 20);
-            var pos = e.GetPosition(this);
-            var aquariumObject = new AquariumObject(new Point((int) pos.X, (int) pos.Y), new Size(10, 10),
-                new Uri("pack://application:,,,Resources/fish1.png"));
+            var pos = e.GetPosition(BackgroundImage);
+            var aquariumObject = new AquariumObject(new Point(pos.X, pos.Y),
+                new Size(100, 100),
+                new Uri("pack://application:,,,/Resources/fish1.png"));
             aquarium.AddFish(fish, aquariumObject);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitializeAquarium();
         }
 
         //private BitmapImage BitmapToImageSource(Bitmap bitmap)

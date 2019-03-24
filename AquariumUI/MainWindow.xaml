@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AquariumUI"
         mc:Ignorable="d"
-        Title="Aquarium 2018" Height="450" Width="800">
+        Title="Aquarium 2018" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
         <Image x:Name="BackgroundImage" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Fill" MouseLeftButtonDown="BackgroundImage_MouseLeftButtonDown"/>
     </Grid>

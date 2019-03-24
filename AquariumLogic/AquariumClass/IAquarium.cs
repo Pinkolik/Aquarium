@@ -13,8 +13,8 @@ namespace AquariumLogic.AquariumClass
 {
     public interface IAquarium
     {
-        IEnumerable<KeyValuePair<IFish, IDrawable>> Fishes { get; }
-        IEnumerable<KeyValuePair<IFood, IDrawable>> Food { get; }
+        IReadOnlyDictionary<IFish, IDrawable> Fishes { get; }
+        IReadOnlyDictionary<IFood, IDrawable> Food { get; }
         long IterationCount { get; }
         int IterateIntervalInMs { get; }
         Size Size { get; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -18,8 +19,8 @@ namespace AquariumLogic.AquariumClass
 {
     public class Aquarium : IAquarium
     {
-        public IEnumerable<KeyValuePair<IFish, IDrawable>> Fishes => fishesDictionary.AsEnumerable();
-        public IEnumerable<KeyValuePair<IFood, IDrawable>> Food => foodDictionary.AsEnumerable();
+        public IReadOnlyDictionary<IFish, IDrawable> Fishes => new ReadOnlyDictionary<IFish, IDrawable>(fishesDictionary);
+        public IReadOnlyDictionary<IFood, IDrawable> Food => new ReadOnlyDictionary<IFood, IDrawable>(foodDictionary);
         public long IterationCount { get; private set; }
         public int IterateIntervalInMs { get; }
         private readonly Dictionary<IFish, IDrawable> fishesDictionary = new Dictionary<IFish, IDrawable>();
